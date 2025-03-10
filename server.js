@@ -1,6 +1,5 @@
 const express = require('express');
 const app = express();
-const port = process.env.PORT || 3000;
 
 // Welcome endpoint
 app.get('/', (req, res) => {
@@ -23,8 +22,12 @@ app.get('/add/:a/:b', (req, res) => {
   res.json({ result: sum });
 });
 
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
-});
+// Only start the server if this file is run directly (not during tests)
+if (require.main === module) {
+  const port = process.env.PORT || 3000;
+  app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
+  });
+}
 
 module.exports = app; // Export for testing
