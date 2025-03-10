@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo-app
+  namespace: default  # Will be replaced by pipeline
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: demo-app
+  template:
+    metadata:
+      labels:
+        app: demo-app
+    spec:
+      containers:
+      - name: demo-app
+        image: avangelstech/avangelsin:latest  # Will be replaced by pipeline
+        ports:
+        - containerPort: 3000
+        readinessProbe:
+          httpGet:
+            path: /health  # Updated to use /health endpoint
+            port: 3000
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /health  # Updated to use /health endpoint
+            port: 3000
+          initialDelaySeconds: 15
+          periodSeconds: 10
+      imagePullSecrets:
+      - name: dockerhub-cred  # Optional, if created
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: demo-app-service
+  namespace: default  # Will be replaced by pipeline
+spec:
+  type: NodePort
+  ports:
+  - port: 3000
+    targetPort: 3000
+  selector:
+    app: demo-app
