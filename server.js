@@ -1,0 +1,30 @@
+const express = require('express');
+const app = express();
+const port = process.env.PORT || 3000;
+
+// Welcome endpoint
+app.get('/', (req, res) => {
+  res.send('Hello from the Test Demo App!');
+});
+
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.json({ status: 'healthy' });
+});
+
+// Add two numbers endpoint
+app.get('/add/:a/:b', (req, res) => {
+  const a = parseInt(req.params.a);
+  const b = parseInt(req.params.b);
+  if (isNaN(a) || isNaN(b)) {
+    return res.status(400).json({ error: 'Invalid numbers provided' });
+  }
+  const sum = a + b;
+  res.json({ result: sum });
+});
+
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
+});
+
+module.exports = app; // Export for testing
